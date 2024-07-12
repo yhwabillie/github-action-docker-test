@@ -5,7 +5,7 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml ./ 
-RUN yarn set version berry && yarn --frozen-lockfile 
+RUN yarn --frozen-lockfile 
 
 FROM base AS builder
 WORKDIR /app
@@ -14,8 +14,12 @@ COPY --from=deps /app/.yarn ./.yarn
 COPY . .
 RUN yarn build
 
+# runner에서 .next를 새로 만들어서 각 스테이지마다 만든것을 필요한것만 가져와서 재조립
+# app > .public, app > .next, app > .next > 호스트쪽 standalone폴더 내부 파일들, .next > static
 FROM node:20-alpine AS runner
 WORKDIR /app
+
+# .next 폴더에 대한 컨테이너 사용자 권한 설정 (root 접속X, 보안)
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
