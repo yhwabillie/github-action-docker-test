@@ -1,0 +1,10 @@
+.next
+.yarn
+.vscode
+.dockerignore
+.DS_Store
+.git
+.gitignore
+Dockerfile
+README.md
+.prettierrc
