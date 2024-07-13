@@ -47,7 +47,7 @@ jobs:
         id: next-cache-dir-path
         run: echo "dir=${{ github.workspace }}/.next/cache" >> $GITHUB_OUTPUT
 
-      # yarn & .next 캐싱
+      # yarn & .next 캐싱 -> 도커에 전달할 거
       - name: Yarn & Next Cache
         uses: actions/cache@v4
         id: yarn-next-cache
@@ -62,6 +62,14 @@ jobs:
       - name: print nextjs cache dir
         continue-on-error: true
         run: ls -la ${{ steps.next-cache-dir-path.outputs.dir }}
+
+      # 종속성 다운로드
+      - name: Install Dependencies
+        run: yarn install
+
+      # build
+      - name: Yarn Build
+        run: yarn build
 
       # # Set Up buildx
       # - name: Setup Docker buildx
