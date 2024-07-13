@@ -31,7 +31,7 @@ export default function Home() {
           <h2>
             Docs <span>-&gt;</span>
           </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
+          <p>제발 좀 나와라</p>
         </a>
 
         <a
