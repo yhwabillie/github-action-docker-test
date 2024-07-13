@@ -1,11 +1,11 @@
-name: Deploy to Github Container Registry
+name: CI/CD nextjs standalone
 
 # 트리거를 수행할 브랜치 지정
 on:
   push:
     branches: [main]
 
-# 환경설정
+# 환경변수
 env:
   DOCKER_CONTAINER_NAME: 'CI/CD'
   DOCKER_IMAGE_NAME: ghcr.io/${{ github.actor }}/standalone-next-build-test
@@ -13,45 +13,84 @@ env:
 
 jobs:
   # 빌드 job
-  deploy:
-    name: Deploy
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    environment: production
-
     steps:
-      # Github 체크아웃하여 CI 서버로 레포 다운로드
+      # Github 체크아웃하여 runner 서버로 레포 다운로드
       - name: Github Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Docker buildx Setup
-      - name: Setup Docker buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v3
+      # yarn v4를 위해 corepack 설정
+      - name: Enable Corepack
+        run: corepack enable
 
-      # 도커 레이어를 캐싱
-      - name: Cache Docker Layers
+      # node 버전 설치
+      - name: Setup Node 20.11.1
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.11.1
+
+      # yarn 버전 설정
+      - name: Set yarn version
+        id: set-version
+        run: |
+          yarn set version 4.3.1
+
+      # yarn 의존성 캐시 경로 가져오기
+      - name: Get Yarn Cache Directory Path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      # .next 캐시 경로 가져오기 (nextjs 빌드 결과물)
+      - name: Get Yarn Cache Directory Path
+        id: next-cache-dir-path
+        run: echo "dir=${{ github.workspace }}/.next/cache" >> $GITHUB_OUTPUT
+
+      # yarn & .next 캐싱
+      - name: Yarn & Next Cache
         uses: actions/cache@v4
+        id: yarn-next-cache
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ env.DOCKER_IMAGE_VERSION }}
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ steps.next-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-buildx-
+            ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-
 
-      # Github 컨테이너 레지스트리에 로그인
-      - name: Login to Github Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.YHWALOG_TOKEN }}
+      - name: print nextjs cache dir
+        continue-on-error: true
+        run: ls -la ${{ github.workspace }}/.next/cache
+
+      # # Set Up buildx
+      # - name: Setup Docker buildx
+      #   uses: docker/setup-buildx-action@v3
+
+      # # Github 컨테이너 레지스트리에 로그인
+      # - name: Login to Github Container Registry
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.YHWALOG_TOKEN }}
+
+      # # 도커 레이어를 캐싱
+      # - name: Cache Docker Layers
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: /tmp/.buildx-cache
+      #     key: ${{ runner.os }}-buildx-${{ env.DOCKER_IMAGE_VERSION }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-buildx-
 
       # Github 컨테이너 레지스트리로 이미지 빌드, 레지스트리로 이미지 푸시
-      - name: Build & Push
-        id: docker_build_push
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          builder: ${{ steps.buildx.outputs.name }}
-          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+      # - name: Build & Push
+      #   id: docker_build_push
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     push: true
+      #     builder: ${{ steps.buildx.outputs.name }}
+      #     tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
+      #     cache-from: type=local,src=/tmp/.buildx-cache
+      #     cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
