@@ -89,11 +89,31 @@ jobs:
           target: next-cache
           push: true
           tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
+
+          # 얘들은 뭐지..?
           cache-from: type=gha
           cache-to: type=gha,mode=max
           outputs: type=local,dest=.
+          # 얘들은 뭐지..?
 
       # 빌드 후 .next 캐싱확인
       - name: print nextjs cache dir after build
         continue-on-error: true
         run: ls -la ${{ steps.next-cache-dir-path.outputs.dir }}
+
+  # 배포 job
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Cloudtype
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: yhwa/standalone-next-build-test
+          stage: main
+          yaml: |
+            name: standalone-next-build-test
+            app: container
+            options:
+              ports: 3000
