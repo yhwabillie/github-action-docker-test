@@ -33,7 +33,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 
 # git-actions runner와 소통하기위한 cache 스테이지
-FROM node:20-alpine AS cache
+FROM node:20-alpine AS next-cache
 COPY --from=builder --chown=nextjs:nodejs /app/.next/cache ./.next/cache
 
 # 컨테이너의 수신 대기 포트를 3000으로 설정

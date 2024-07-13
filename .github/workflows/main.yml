@@ -80,11 +80,17 @@ jobs:
       - name: Build & Push
         id: docker_build_push
         uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILDKIT: 1
+          BUILDKIT_PROGRESS: plain
         with:
           context: .
-          target: cache
+          file: Dockerfile
+          target: next-cache
           push: true
           tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           outputs: type=local,dest=.
 
       # 빌드 후 .next 캐싱확인
