@@ -1,4 +1,4 @@
-name: Deploy to Amazon ECR
+name: Deploy to Github Container Registry
 
 # 트리거를 수행할 브랜치 지정
 on:
@@ -10,11 +10,11 @@ env:
   DOCKER_CONTAINER_NAME: 'CI/CD'
   DOCKER_IMAGE_NAME: ghcr.io/${{ github.actor }}/standalone-next-build-test
   DOCKER_IMAGE_VERSION: ${{ github.sha }}
-  
+
   # AWS_REGION: ${{ secrets.AWS_REGION }}
   # ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
   # ECR_REPO: ${{ secrets.ECR_REPO }}
-  
+
 jobs:
   # 배포 job
   deploy:
@@ -36,13 +36,14 @@ jobs:
       - name: Cache Docker Layers
         uses: actions/cache@v3
         with:
+          path: /cache/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ env.DOCKER_IMAGE_VERSION }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-            
+
       # Github 컨테이너 레지스트리에 로그인
       - name: Login to Github Container Registry
-        uses: docker/login-actions@v3
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -51,14 +52,8 @@ jobs:
       # Github 컨테이너 레지스트리로 이미지 빌드, 레지스트리로 이미지 푸시
       - name: Build & Push
         id: docker_build_push
-        uses: docker/build-push-actions@v3
+        uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
-          
-            
-            
-      
-          
-  
