@@ -1,8 +1,9 @@
-FROM node:20-alpine AS base
+# FROM node:20-alpine AS base
+FROM node:20 AS base
 RUN corepack enable && corepack prepare yarn@4.3.1
 
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
+# RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml ./ 
 RUN yarn --frozen-lockfile 
@@ -16,7 +17,7 @@ RUN yarn build
 
 # runner에서 .next를 새로 만들어서 각 스테이지마다 만든것을 필요한것만 가져와서 재조립
 # app > .public, app > .next, app > .next > 호스트쪽 standalone폴더 내부 파일들, .next > static
-FROM node:20-alpine AS runner
+FROM node:20 AS runner
 WORKDIR /app
 
 # .next 폴더에 대한 컨테이너 사용자 권한 설정 (root 접속X, 보안)
@@ -33,7 +34,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 
 # git-actions runner와 소통하기위한 cache 스테이지
-FROM node:20-alpine AS next-cache
+FROM node:20 AS next-cache
 COPY --from=builder --chown=nextjs:nodejs /app/.next/cache ./.next/cache
 
 ENV HOST 0.0.0.0
