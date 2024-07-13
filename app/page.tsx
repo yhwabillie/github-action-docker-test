@@ -5,10 +5,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <div className={styles.description}>
-        <p>
-          Get started&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
+        <p>Hello EC2 Hello Docker Hello Github Actions! 240713</p>
         <div>
           <a
             href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
