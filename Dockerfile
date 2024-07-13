@@ -32,6 +32,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
+FROM node:20-alpine AS cache
+COPY --from=builder --chown=nextjs:nodejs /app/.next/cache ./.next/cache
+
 # 컨테이너의 수신 대기 포트를 3000으로 설정
 EXPOSE 3000
 ENV PORT 3000

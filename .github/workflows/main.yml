@@ -82,12 +82,12 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          target: runner
+          target: cache
           push: false
           tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
           outputs: type=local,dest=.
 
-      # 빌드 후 .next 캐싱확인
-      - name: print nextjs cache dir after build
-        continue-on-error: true
-        run: ls -la ${{ steps.next-cache-dir-path.outputs.dir }}
+      # # 빌드 후 .next 캐싱확인
+      # - name: print nextjs cache dir after build
+      #   continue-on-error: true
+      #   run: ls -la ${{ steps.next-cache-dir-path.outputs.dir }}
