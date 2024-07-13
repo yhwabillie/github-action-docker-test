@@ -40,7 +40,7 @@ jobs:
       # yarn 의존성 캐시 경로 가져오기
       - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
-        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       # .next 캐시 경로 가져오기 (nextjs 빌드 결과물)
       - name: Get Yarn Cache Directory Path
@@ -81,10 +81,11 @@ jobs:
         id: docker_build_push
         uses: docker/build-push-action@v6
         with:
-          push: true
+          context: .
+          target: cache
+          push: false
           tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          outputs: type=local,dest=.
 
       # 빌드 후 .next 캐싱확인
       - name: print nextjs cache dir after build
