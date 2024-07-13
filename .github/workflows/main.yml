@@ -30,7 +30,7 @@ jobs:
 
       # 도커 레이어를 캐싱
       - name: Cache Docker Layers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /temp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ env.DOCKER_IMAGE_VERSION }}
