@@ -61,7 +61,7 @@ jobs:
 
       - name: print nextjs cache dir
         continue-on-error: true
-        run: ls -la ${{ github.workspace }}/.next/cache
+        run: ls -la ${{ steps.next-cache-dir-path.outputs.dir }}
 
       # # Set Up buildx
       # - name: Setup Docker buildx
