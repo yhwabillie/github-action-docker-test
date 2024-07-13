@@ -32,7 +32,7 @@ jobs:
       - name: Cache Docker Layers
         uses: actions/cache@v4
         with:
-          path: /temp/.buildx-cache
+          path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ env.DOCKER_IMAGE_VERSION }}
           restore-keys: |
             ${{ runner.os }}-buildx-
