@@ -101,14 +101,20 @@ jobs:
         continue-on-error: true
         run: ls -la ${{ steps.next-cache-dir-path.outputs.dir }}
 
-      - name: Deploy to Cloudtype
-        uses: cloudtype-github-actions/deploy@v1
+  # 배포 job
+  deploy:
+    # 빌드 job이 끝난후 실행
+    needs: build
+    name: Deploy
+    runs-on: [self-hosted, label-go]
+    steps:
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
         with:
-          token: ${{ secrets.CLOUDTYPE_TOKEN }}
-          project: yhwa/standalone-next-build-test
-          stage: main
-          yaml: |
-            name: standalone-next-build-test
-            app: container
-            options:
-              ports: 3000
+          registry: ghcr.io
+          username: ${{github.actor }}
+          password: ${{ secrets.YHWALOG_TOKEN }}
+      - name: Docker Run
+        run: |
+          docker stop ${{ env.DOCKER_CONTAINER_NAME }} && docker rm ${{ env.DOCKER_CONTAINER_NAME }} && docker rmi ${{ env.DOCKER_IMAGE_NAME }}:latest
+          docker run -d 80:3000 --name ${{ env.DOCKER_CONTAINER_NAME }} --restart always ${{ env.DOCKER_IMAGE_NAME }}:latest
