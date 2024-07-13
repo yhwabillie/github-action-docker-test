@@ -83,7 +83,7 @@ jobs:
         with:
           context: .
           target: cache
-          push: false
+          push: true
           tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
           outputs: type=local,dest=.
 
