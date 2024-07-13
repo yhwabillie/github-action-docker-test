@@ -7,9 +7,9 @@ on:
 
 # 환경변수
 env:
-  DOCKER_IMAGE_NAME: ghcr.io/${{ github.actor }}/standalone-next-build-test
+  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/standalone-next-build-test
   DOCKER_IMAGE_VERSION: ${{ github.sha }}
-  DOCKER_CONTAINER_NAME: go_cicd
+  NAME: go_cicd
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 jobs:
@@ -89,7 +89,7 @@ jobs:
           file: Dockerfile
           target: next-cache
           push: true
-          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
+          tags: ${{ env.DOCKER_IMAGE }}:latest
 
           # 얘들은 뭐지..?
           cache-from: type=gha
@@ -117,5 +117,5 @@ jobs:
           password: ${{ secrets.YHWALOG_TOKEN }}
       - name: Docker Run
         run: |
-          docker stop ${{ env.DOCKER_CONTAINER_NAME }} && docker rm ${{ env.DOCKER_CONTAINER_NAME }} && docker rmi ${{ env.DOCKER_IMAGE_NAME }}:latest
-          docker run -d 80:3000 --name go_cicd --restart always ${{ env.DOCKER_IMAGE_NAME }}:latest
+          docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
+          docker run -d -p 80:3000 --name go_cicd --restart always ${{ env.DOCKER_IMAGE }}:latest
