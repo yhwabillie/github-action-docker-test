@@ -59,46 +59,32 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-
 
-      - name: print nextjs cache dir
+      # 빌드전 .next 캐싱확인
+      - name: print nextjs cache dir before build
         continue-on-error: true
         run: ls -la ${{ steps.next-cache-dir-path.outputs.dir }}
 
-      # 종속성 다운로드
-      - name: Install Dependencies
-        run: yarn install
+      # Set Up buildx
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
 
-      # build
-      - name: Yarn Build
-        run: yarn build
-
-      # # Set Up buildx
-      # - name: Setup Docker buildx
-      #   uses: docker/setup-buildx-action@v3
-
-      # # Github 컨테이너 레지스트리에 로그인
-      # - name: Login to Github Container Registry
-      #   uses: docker/login-action@v3
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.YHWALOG_TOKEN }}
-
-      # # 도커 레이어를 캐싱
-      # - name: Cache Docker Layers
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: /tmp/.buildx-cache
-      #     key: ${{ runner.os }}-buildx-${{ env.DOCKER_IMAGE_VERSION }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-buildx-
+      # Github 컨테이너 레지스트리에 로그인
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.YHWALOG_TOKEN }}
 
       # Github 컨테이너 레지스트리로 이미지 빌드, 레지스트리로 이미지 푸시
-      # - name: Build & Push
-      #   id: docker_build_push
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     push: true
-      #     builder: ${{ steps.buildx.outputs.name }}
-      #     tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
-      #     cache-from: type=local,src=/tmp/.buildx-cache
-      #     cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+      - name: Build & Push
+        id: docker_build_push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
+
+      # 빌드 후 .next 캐싱확인
+      - name: print nextjs cache dir after build
+        continue-on-error: true
+        run: ls -la ${{ steps.next-cache-dir-path.outputs.dir }}
