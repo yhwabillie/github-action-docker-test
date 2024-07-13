@@ -12,7 +12,7 @@ env:
   DOCKER_IMAGE_VERSION: ${{ github.sha }}
 
 jobs:
-  # 배포 job
+  # 빌드 job
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
