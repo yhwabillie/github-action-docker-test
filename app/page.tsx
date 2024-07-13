@@ -31,7 +31,7 @@ export default function Home() {
           <h2>
             Docs <span>-&gt;</span>
           </h2>
-          <p>제발 좀 나와라</p>
+          <p>제발 좀 나와</p>
         </a>
 
         <a
