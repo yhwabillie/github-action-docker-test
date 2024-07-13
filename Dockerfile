@@ -32,6 +32,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
+# git-actions runner와 소통하기위한 cache 스테이지
 FROM node:20-alpine AS cache
 COPY --from=builder --chown=nextjs:nodejs /app/.next/cache ./.next/cache
 
