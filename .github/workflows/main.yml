@@ -47,7 +47,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ github.YHWALOG_TOKEN }}
+          password: ${{ secrets.YHWALOG_TOKEN }}
 
       # Github 컨테이너 레지스트리로 이미지 빌드, 레지스트리로 이미지 푸시
       - name: Build & Push
