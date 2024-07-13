@@ -11,10 +11,6 @@ env:
   DOCKER_IMAGE_NAME: ghcr.io/${{ github.actor }}/standalone-next-build-test
   DOCKER_IMAGE_VERSION: ${{ github.sha }}
 
-  # AWS_REGION: ${{ secrets.AWS_REGION }}
-  # ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-  # ECR_REPO: ${{ secrets.ECR_REPO }}
-
 jobs:
   # 배포 job
   deploy:
