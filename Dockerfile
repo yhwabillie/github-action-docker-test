@@ -38,5 +38,5 @@ USER nextjs
 
 # 컨테이너의 수신 대기 포트를 3000으로 설정
 EXPOSE 3000
-
+ENV HOSTNAME "0.0.0.0"
 CMD ["node", "server.js"]
