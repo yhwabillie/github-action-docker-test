@@ -20,7 +20,7 @@ jobs:
     steps:
       # Github 체크아웃하여 runner 서버로 레포 다운로드
       - name: Github Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       # yarn v4를 위해 corepack 설정
       - name: Enable Corepack
@@ -68,7 +68,7 @@ jobs:
       # Set Up buildx
       - name: Setup Docker buildx
         id: buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v1
 
       # Github 컨테이너 레지스트리에 로그인
       - name: Login to Github Container Registry
@@ -81,7 +81,7 @@ jobs:
       # Github 컨테이너 레지스트리로 이미지 빌드, 레지스트리로 이미지 푸시
       - name: Build & Push
         id: docker_build_push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v2
         env:
           DOCKER_BUILDKIT: 1
           BUILDKIT_PROGRESS: plain
