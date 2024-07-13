@@ -7,7 +7,7 @@ on:
 
 # 환경변수
 env:
-  DOCKER_CONTAINER_NAME: 'CI/CD'
+  DOCKER_CONTAINER_NAME: go_cicd
   DOCKER_IMAGE_NAME: ghcr.io/${{ github.actor }}/standalone-next-build-test
   DOCKER_IMAGE_VERSION: ${{ github.sha }}
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
@@ -118,4 +118,4 @@ jobs:
       - name: Docker Run
         run: |
           docker stop ${{ env.DOCKER_CONTAINER_NAME }} && docker rm ${{ env.DOCKER_CONTAINER_NAME }} && docker rmi ${{ env.DOCKER_IMAGE_NAME }}:latest
-          docker run -d 80:3000 --name ${{ env.DOCKER_CONTAINER_NAME }} --restart always ${{ env.DOCKER_IMAGE_NAME }}:latest
+          docker run -d 80:3000 --name go_cicd --restart always ${{ env.DOCKER_IMAGE_NAME }}:latest

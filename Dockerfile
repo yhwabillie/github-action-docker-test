@@ -36,9 +36,7 @@ USER nextjs
 FROM node:20-alpine AS next-cache
 COPY --from=builder --chown=nextjs:nodejs /app/.next/cache ./.next/cache
 
-# 컨테이너의 수신 대기 포트를 3000으로 설정
+ENV HOST 0.0.0.0
 EXPOSE 3000
-ENV PORT 3000
 
-# # # # node로 애플리케이션 실행
-CMD HOSTNAME="0.0.0.0" node server.js
+CMD [ "node", "server.js" ]
