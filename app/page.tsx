@@ -12,7 +12,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            제발좀 되라 좀 되어라 도커 켯다 이제
+            제발좀 되라 좀 되어라 도커 켯다 이제 EC2 인스턴스도 새로 만들엇다 이제 정말 켜져라
           </a>
         </div>
       </div>
