@@ -117,5 +117,4 @@ jobs:
           password: ${{ secrets.YHWALOG_TOKEN }}
       - name: Docker Run
         run: |
-          docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
           docker run -d -p 80:3000 --name go_cicd ${{ env.DOCKER_IMAGE }}:latest
